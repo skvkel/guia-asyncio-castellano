@@ -1,4 +1,7 @@
 # Asyncio Learn
+El contenido que hay a continuación proviene del aprendizaje de asincronía 
+en Python apoyándome en la obra "Python Asyncio Jump-Start", del autor 
+Jason Brownlee.
 
 ## Capítulo 1. Concurrencia con Asyncio
 Una **corrutina** es una función que puede ser suspendida y reanudada. Tienen
@@ -353,6 +356,8 @@ Para utilizar el context manager with lock, debemos especificar async.
 python example_lock.py
 ````
 
+![Lock primitive](https://github.com/user-attachments/assets/13a46ba7-a345-43f5-a658-a99618f83745)
+
 ## Asyncio Semaphore
 Los semáforos asíncronos son exactamente lo mismo que los semáforos síncronos, a diferencia
 que tienen soporte para asyncio. Son un Lock, pero para poder adquirir una cantidad 
@@ -383,5 +388,7 @@ Un ejemplo de uso real es que ese Event fuese la creación de una tabla en
 base de datos. Hasta que no fuese creada, no se establecería el Event a True 
 con set() y no continuarían las demás corrutinas que habrían hecho un wait() de
 ese evento para hacer lo necesario en la tabla. 
+
+![Event primitive](https://github.com/user-attachments/assets/319e1aa4-36bd-4b88-a1b2-52ede5a75216)
 
 
