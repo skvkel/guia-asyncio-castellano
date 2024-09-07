@@ -1,7 +1,7 @@
 # Asyncio Learn
 
 ## Capítulo 1. Concurrencia con Asyncio
-Una **corutina** es una función que puede ser suspendida y reanudada. Tienen
+Una **corrutina** es una función que puede ser suspendida y reanudada. Tienen
 el control sobre cuando son suspendidas.
 Puede ser suspendida por varias razones, como la ejecución de otra corrutina 
 para esperar otra task o esperar por un recurso externo.
@@ -21,7 +21,7 @@ En el multitasking, son "ellas mismas" quien toman estas decisiones.
 ### Corrutina vs rutina vs subrutina
 Rutina --> programa  
 Subrutina --> función del programa  
-Corutina --> extensión de subrutina. Un tipo especial de subrutina 
+corrutina --> extensión de subrutina. Un tipo especial de subrutina 
 > Una rutina tiene subrutinas (un programa tiene funciones)
 
 Entonces, la gran diferencia es que la **subrutina se ejecuta de principio a 
@@ -33,7 +33,7 @@ con la nueva.
 ### Corrutina vs generador
 Un generador es una función especial que puede pausar/suspender su ejecución, 
 retornar un valor y recuperar su flujo al terminar la función llamada.
-Una corutina puede suspenderse usando **await**. Será reanudada cuando la 
+Una corrutina puede suspenderse usando **await**. Será reanudada cuando la 
 rutina haya sido completada.
 > await (asyncio) --> misma función que *yield* en generador. Pausa su ejecución
 > y cede el control.
@@ -46,8 +46,8 @@ múltiples subprocesos (o hebras), que tendrán como padre la hebra principal.
 El SO es quien controla la ejecución de dichas hebras. Una corrutina es mucho
 más liviano que una hebra, ya que es definida como una función.  
 IMPORTANTE: una 
-hebra puede ejecutar múltiples corutinas.
-> Las corutinas son más rápidas de crear, ejecutar y consumen menos memoria. 
+hebra puede ejecutar múltiples corrutinas.
+> Las corrutinas son más rápidas de crear, ejecutar y consumen menos memoria. 
 
 Por lo tanto, una hebra es un "objeto independiente", mientras que las corrutinas
 son "funciones" dentro de una misma hebra, que se van "turnando".
@@ -68,7 +68,7 @@ En Python, la programación asíncrona se implementa, por ejemplo, con **asyncio
 que nos brinda operaciones *async/await*. Se implementa usando corrutinas que corren
 en un bucle de eventos, que corren sobre **una hebra**.
 
-> async def --> Corutina
+> async def --> corrutina
 ````python
 async def my_coroutine():
     ...
@@ -79,7 +79,7 @@ async def my_coroutine():
 > Lo que devuelva la corrutina, se captura y si se ha programado para asignar 
 > el retorno a una variable, dicha variable contendrá lo capturado por await
 
-Es necesario definir un *event loop* para trabajar con corutinas en Python. Este
+Es necesario definir un *event loop* para trabajar con corrutinas en Python. Este
 event loop se puede crear y ejecutar con **asyncio.run()**. Desde este event loop 
 se llama a la corrutina "padre".
 > asyncio.run() --> inicia el bucle de eventos. Toma una corrutina como argumento
@@ -92,10 +92,10 @@ se llama a la corrutina "padre".
 Las ventajas de asyncio frente a las hebras son:
 - Menor sobrecarga: menos consumo de memoria y mejor y más rápido cambio de contexto.
 - Escalabilidad: pueden manejar muchas más conexiones que las hebras
-- Simplicidad en manejo de estados: es más sencillo manejar estados de corutinas.
+- Simplicidad en manejo de estados: es más sencillo manejar estados de corrutinas.
 
 ### Resumen capítulo 1
-1. Una corutina es una función que puede ser pausada y reanudada varias veces hasta
+1. Una corrutina es una función que puede ser pausada y reanudada varias veces hasta
 que finaliza. Se define como ``async def my_async_function()``
 2. Se utiliza ``asyncio.run(my_async_routine())`` para lanzar el bucle de eventos.
 3. Asyncio se utiliza para I/O no bloqueantes, con grandes necesidades de una
@@ -312,7 +312,7 @@ python example_context_manager.py
 Este capítulo es realmente importante debido a la necesidad de la sincronización
 mientras se utilizan las técnicas de concurrencia usando la memoria compartida.  
 
-**Corutina-segura**: es una corrutina que cuando se ejecute concurrentemente 
+**corrutina-segura**: es una corrutina que cuando se ejecute concurrentemente 
 se asegura que estará libre de errores. Se refiere a que el código está **libre 
 de condiciones de carrera**.
 
