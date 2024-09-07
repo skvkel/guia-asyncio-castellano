@@ -379,6 +379,16 @@ pyhton example_queue.py
 Proteger una sección crítica para evitar condiciones de carrera (race condition)
 es extremadamente importante. Para ello, podemos utilizar diversas herramientas
 como las descritas a continuación.
+
+### Asyncio Lock
+Es igual que el Lock síncrono (acquire y release), a diferencia que acquire es 
+una corrutina (debemos esperarla). Espera hasta que el lock se libere, haciendo 
+posible que otras corrutinas se ejecuten sin bloquear la hebra principal. 
+Para utilizar el context manager with lock, debemos especificar async.
+``async with lock:``
+````python
+python example_lock.py
+````
 ![Lock primitive](https://github.com/user-attachments/assets/13a46ba7-a345-43f5-a658-a99618f83745)
 
 ### Asyncio Semaphore
