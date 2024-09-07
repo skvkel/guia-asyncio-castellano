@@ -1,7 +1,41 @@
-# Asyncio Learn
 El contenido que hay a continuación proviene del aprendizaje de asincronía 
 en Python apoyándome en la obra "Python Asyncio Jump-Start", del autor 
 Jason Brownlee.
+## Índice
+1. [Capítulo 1. Concurrencia con Asyncio](#capítulo-1-concurrencia-con-asyncio)
+   - [Corrutina vs Rutina vs Subrutina](#corrutina-vs-rutina-vs-subrutina)
+   - [Corrutina vs Generador](#corrutina-vs-generador)
+   - [Corrutina vs Hebra](#Corrutina-vs-thread)
+   - [¿Qué es la Programación Asíncrona?](#qué-es-la-programación-asíncrona)
+   - [¿Cuándo Usar Asyncio?](#cuándo-usar-asyncio)
+   - [Resumen del Capítulo 1](#Resumen-capítulo-1)
+   
+2. [Capítulo 2. Corrutinas y Tasks](#capítulo-2-corrutinas-y-tasks)
+   - [Cómo Crear y Correr Tasks](#cómo-crear-y-correr-tasks)
+   - [¿Cuándo se Ejecuta una Task Tras Crearla?](#cuándo-se-ejecuta-una-task-tras-crearla)
+   - [Uso de Gather para Esperar Todas las Tasks Creadas](#Cómo-utilizar-Gather-para-esperar-todas-las-task-creadas)
+   - [Captura de Excepciones en Corrutinas](#captura-de-excepciones-en-corrutinas)
+   - [Cancelación de Tasks](#Cancelación-de-task)
+   - [Callback de Correcta Finalización](#callback-de-correcta-finalización)
+   
+3. [Capítulo 3. Colecciones de Tasks](#capítulo-3-colecciones-de-tasks)
+   - [Función asyncio.gather()](#Función-asynciogather)
+   - [Función asyncio.wait()](#Función-asynciowait)
+   - [Función asyncio.wait_for()](#Función-wait_for)
+   - [Función asyncio.as_completed()](#Función-as_completed)
+   - [Función asyncio.to_thread()](#Función-to_thread)
+
+4. [Capítulo 4. Iteradores, Generadores y Context Managers](#capítulo-4-iteradores-generadores-y-context-managers)
+   - [Iteradores Asíncronos](#iteradores-asíncronos)
+   - [Generadores Asíncronos](#generadores-asíncronos)
+   - [Context Managers Asíncronos](#Context-Manager-asíncronos)
+
+5. [Capítulo 5. Colas y Primitivas de Sincronización](#capítulo-5-colas-y-primitivas-de-sincronización)
+   - [Compartir Datos entre Corrutinas Mediante Colas](#compartir-datos-entre-corrutinas-mediante-colas)
+   - [Protección de Sección Crítica](#protección-de-sección-crítica)
+   - [Asyncio Lock](#asyncio-lock)
+   - [Asyncio Semaphore](#asyncio-semaphore)
+   - [Asyncio Event](#asyncio-event)
 
 ## Capítulo 1. Concurrencia con Asyncio
 Una **corrutina** es una función que puede ser suspendida y reanudada. Tienen
@@ -212,7 +246,7 @@ cuando se ha alcanzado el timeout y cuales no:
 ````python
 python example_wait.py
 ````
-### Función await_for
+### Función wait_for
 Es igual que **await**, pero se puede indicar un timeout. Si se llama sin
 timeout, es lo mismo que await. Si se llama con timeout, devolverá TimeOutError
 si se alcanza el timeout.  
@@ -345,20 +379,9 @@ pyhton example_queue.py
 Proteger una sección crítica para evitar condiciones de carrera (race condition)
 es extremadamente importante. Para ello, podemos utilizar diversas herramientas
 como las descritas a continuación.
-
-## Asyncio Lock
-Es igual que el Lock síncrono (acquire y release), a diferencia que acquire es 
-una corrutina (debemos esperarla). Espera hasta que el lock se libere, haciendo 
-posible que otras corrutinas se ejecuten sin bloquear la hebra principal. 
-Para utilizar el context manager with lock, debemos especificar async.
-``async with lock:``
-````python
-python example_lock.py
-````
-
 ![Lock primitive](https://github.com/user-attachments/assets/13a46ba7-a345-43f5-a658-a99618f83745)
 
-## Asyncio Semaphore
+### Asyncio Semaphore
 Los semáforos asíncronos son exactamente lo mismo que los semáforos síncronos, a diferencia
 que tienen soporte para asyncio. Son un Lock, pero para poder adquirir una cantidad 
 concreta de ellos. Es decir, es como poner un número máximo de Locks que se pueden
@@ -370,7 +393,7 @@ simultáneas en base de datos. Si nuestra base de datos tiene un límite máximo
 un bucle de eventos con 100 corrutinas y compartiremos en todas ellas el mismo
 semáforo. 
 
-## Asyncio Event
+### Asyncio Event
 Es una forma de compartir un bool entre corrutinas. Es un wrapper de una variable
 booleana. Puede ser True (set) o False (not set).
 La corrutina puede actuar bloqueándose hasta que el estado no sea el esperado.
