@@ -1,6 +1,5 @@
-El contenido que hay a continuación proviene del aprendizaje de asincronía 
-en Python apoyándome en la obra "Python Asyncio Jump-Start", del autor 
-Jason Brownlee.
+Guía didáctica de  asincronía aplicada a Python.
+
 ## Índice
 1. [Capítulo 1. Concurrencia con Asyncio](#capítulo-1-concurrencia-con-asyncio)
    - [Corrutina vs Rutina vs Subrutina](#corrutina-vs-rutina-vs-subrutina)
@@ -38,56 +37,53 @@ Jason Brownlee.
    - [Asyncio Event](#asyncio-event)
 
 ## Capítulo 1. Concurrencia con Asyncio
-Una **corrutina** es una función que puede ser suspendida y reanudada. Tienen
+Una **corrutina** es una función que puede ser suspendida y reanudada nuevamente. Tienen
 el control sobre cuando son suspendidas.
 Puede ser suspendida por varias razones, como la ejecución de otra corrutina 
 para esperar otra task o esperar por un recurso externo.
+Puede ser reanudada y suspendida tantas veces como sea necesario antes de su finalización.
 
+``
 Muchas corrutinas pueden ser ejecutadas a la vez, por lo que permitimos la 
-concurrencia.  
+concurrencia.
+``
 
-Una **subrutina** es una función que puede ser ejecutada, empezando desde un
-punto y finalizada en otro punto. 
-Por lo tanto, una corrutina puede ser ejecutada después de ser suspendida, y 
-reanudada muchas veces antes de su finalización.
+### Corrutina vs hilo vs proceso 
 
 La diferencia entre multihebra y multitasking es que la multihebra es 
 gestionada por el SO. Él es quien decide cuál hebra ejecutar y cuál detener.
-En el multitasking, son "ellas mismas" quien toman estas decisiones.
+En el multitasking, son "ellas mismas" (el event loop) quien toman estas decisiones.
 
 ### Corrutina vs rutina vs subrutina
 Rutina --> programa  
 Subrutina --> función del programa  
 corrutina --> extensión de subrutina. Un tipo especial de subrutina 
-> Una rutina tiene subrutinas (un programa tiene funciones)
+> Una rutina tiene subrutinas (equivalente a un programa tiene funciones)
 
 Entonces, la gran diferencia es que la **subrutina se ejecuta de principio a 
 fin y la corrutina se puede pausar durante su ejecución las veces que queramos**
-
-Cuando una corrutina lanza otra corrutina, debe parar su ejecución y continuar 
-con la nueva.
 
 ### Corrutina vs generador
 Un generador es una función especial que puede pausar/suspender su ejecución, 
 retornar un valor y recuperar su flujo al terminar la función llamada.
 Una corrutina puede suspenderse usando **await**. Será reanudada cuando la 
 rutina haya sido completada.
-> await (asyncio) --> misma función que *yield* en generador. Pausa su ejecución
+> await (asyncio) --> función parecida que *yield* en generador. Pausa su ejecución
 > y cede el control.
 
 ### Corrutina vs thread
-Una thread es una hebra de ejecución en el sistema operativo. Cada programa es
-un proceso y tiene al menos una hebra (la hebra principal). Se pueden ejecutar
-múltiples subprocesos (o hebras), que tendrán como padre la hebra principal.
+Una thread es un hilo de ejecución en el sistema operativo. Cada programa es
+un proceso y tiene al menos un hilo (el hilo principal). Se pueden ejecutar
+múltiples subprocesos (o hilos), que tendrán como padre el hilo principal.
 
-El SO es quien controla la ejecución de dichas hebras. Una corrutina es mucho
-más liviano que una hebra, ya que es definida como una función.  
-IMPORTANTE: una 
-hebra puede ejecutar múltiples corrutinas.
+El SO es quien controla la ejecución de dichos hilos. Una corrutina es mucho
+más liviano que un hilo, ya que es definida como una función.  
+IMPORTANTE: en un hilo se puede levantar un event loop y programar múltiples corrutinas. 
+
 > Las corrutinas son más rápidas de crear, ejecutar y consumen menos memoria. 
 
-Por lo tanto, una hebra es un "objeto independiente", mientras que las corrutinas
-son "funciones" dentro de una misma hebra, que se van "turnando".
+Por lo tanto, un hilo es un "objeto independiente", mientras que las corrutinas
+son "funciones" dentro de un mismo hilo, que se van "turnando".
 
 ### ¿Qué es la programación asíncrona?
 Asíncrono significa "no al mismo tiempo". Cuando programamos algo asíncrono, 
@@ -105,16 +101,19 @@ En Python, la programación asíncrona se implementa, por ejemplo, con **asyncio
 que nos brinda operaciones *async/await*. Se implementa usando corrutinas que corren
 en un bucle de eventos, que corren sobre **una hebra**.
 
-> async def --> corrutina
 ````python
+Una función asíncrona se define como:
+
 async def my_coroutine():
     ...
 ````
-
-> await --> suspenderá la llamada y planificará la corrutina para ejecutarse. La
+## Sentencia await
+> Await suspenderá la llamada y planificará la corrutina para ejecutarse. La
 > devolución no se producirá hasta que la corrutina termine. Es como ejecutar yield.
 > Lo que devuelva la corrutina, se captura y si se ha programado para asignar 
-> el retorno a una variable, dicha variable contendrá lo capturado por await
+> el retorno a una variable, dicha variable contendrá lo capturado por await.
+> Es como decir: "ejecuta esto hasta que termine y dame su resultado. Mientras tanto, espero
+> y cedo el turno a otra operación."
 
 Es necesario definir un *event loop* para trabajar con corrutinas en Python. Este
 event loop se puede crear y ejecutar con **asyncio.run()**. Desde este event loop 
@@ -168,9 +167,9 @@ deberíamos hacer un ``await my_task()`` y
 deberíamos esperar (pase lo que pase en el interior de la corrutina) su 
 finalización. 
 
-Cuando usamos await en una coroutine, como await my_task(), estás diciendo:
+Cuando usamos await en una corrutina, como await my_task(), estás diciendo:
 "Ejecuta esta coroutine hasta que se pause (por una operación de 
-entrada/salida o await interno), luego continúa con la corroutine actual 
+entrada/salida o await interno), luego continúa con la corrutina actual 
 (la que está esperando)".
 
 Con las funciones *get_name()* y *result()* podemos obtener el 
@@ -242,14 +241,16 @@ FIRST_COMPLETED, FIRST_EXCEPTION
 ejecución y las que estaban pending continúan ejecutándose
 
 En el siguiente ejemplo, podemos ver cuáles son las tareas que han terminado 
-cuando se ha alcanzado el timeout y cuales no:
+cuando se ha alcanzado el timeout y cuales no. Es decir, cuando el timeout expira nos 
+retornará las que han terminado y las que están pendientes:
 ````python
 python example_wait.py
 ````
 ### Función wait_for
-Es igual que **await**, pero se puede indicar un timeout. Si se llama sin
-timeout, es lo mismo que await. Si se llama con timeout, devolverá TimeOutError
-si se alcanza el timeout.  
+Es igual que **await**, pero se puede indicar un timeout. Se diferencia del .wait() en que 
+al expirar el timeout, no retorna un TimeoutError.
+Si se llama sin timeout, es lo mismo que await. Si se llama con timeout, 
+devolverá TimeOutError si se alcanza el timeout.  
 En el siguiente ejemplo, veremos cómo se levanta un TimeoutError al expirar el
 timeout configurado:
 ````python
@@ -258,42 +259,42 @@ python example_wait_for.py
 
 ## Función as_completed
 Esta función nos retorna un iterable de awaitables. Sin embargo, los iterables
-deben ser **esperados**. Si no, nos retorna un RuntimeWarning. Ponemos 
-configurar un **timeout**, que nos devolverá un TimeOutError si todas las task
+deben ser **esperados**. Si no, nos retorna un RuntimeWarning. Podemos 
+configurar un **timeout**, que nos devolverá un TimeOutError si todas las tasks
 no han terminado en ese tiempo.
 ````python
 python example_as_completed.py
 ````
 
 ## Función to_thread()
-Es un método difícil de entender, pero realmente útil. Imaginemos que hay
+Es un método algo complejo de entender, pero realmente útil. Imaginemos que hay
 un procedimiento I/O que debemos ejecutar fuera del bucle de eventos, sin ceder
 el control a otro. La única manera es ejecutarlo fuera del bucle de eventos.
-Para ello, podríamos ejecutarlo en un proceso o una hebra. Esta función está
-diseñada para ejecutar esa función en una hebra. Esto nos permite poder ejecutar
-de forma **paralela una hebra y una o varias corrutinas**. 
-Utilizamos corrutinas porque son mucho más livianas que las hebras (lanzar 1000
-hebras es muchísimo más costoso y puede agotar los recursos del equipo), pero
-si necesitamos lanzar una hebra dentro de un bucle de eventos, tenemos esta 
+Para ello, podríamos ejecutarlo en un proceso o un hilo. Esta función está
+diseñada para ejecutar esa función en un hilo. Esto nos permite poder ejecutar
+de forma **concurrente un hilo y una o varias corrutinas**. 
+Utilizamos corrutinas porque son mucho más livianas que los hilos (lanzar 1000
+hilos es muchísimo más costoso y puede agotar los recursos del equipo), pero
+si necesitamos lanzar un hilo dentro de un bucle de eventos, tenemos esta 
 función.
 
 Podríamos pensar que podemos hacer una función asíncrona colocando un await a
-la lectura del fichero, pero si queremos usar una libreria para ello (en el 
-core no se encuentra) deberíamos hacerlo así.
+la lectura del fichero, pero si no tenemos una implementación específica existente (en el 
+core no se encuentra) deberíamos hacerlo con este método.
 
 En el siguiente ejemplo, tendremos 3 endpoints. En uno de ellos, se ejecutan 
 cosas I/O simuladas con un sleep y devuelve la respuesta. En otro, se ejecuta
-la lectura de un fichero (CPU/bound) por lo que si lo ejecutamos en otra hebra,
+la lectura de un fichero (CPU/bound) por lo que si lo ejecutamos en otro hilo,
 el servidor podrá seguir recibiendo peticiones sin bloquear el bucle de eventos.
 En el último, es un mix de ambos. La petición hace cosas I/O y tareas intensivas
-de CPU. Estas tareas se lanzan en una hebra nueva con to_thread y el resto de 
+de CPU. Estas tareas se lanzan en un hilo nuevo con to_thread y el resto de 
 tareas I/O se ejecutan en el bucle de eventos.
 ````python
 python example_to_thread.py
 ````
 
 En este otro ejemplo, el bucle de eventos estará en contínua ejecución, mientras
-que la tarea larga se ejecuta en una hebra separada:
+que la tarea de CPU intensiva se ejecuta en una hebra separada:
 ````python
 python example_to_thread_2.py
 ````
@@ -326,7 +327,7 @@ python example_generator.py
 ````
 Este ejemplo no tiene mucho sentido, ya que el iterador va a esperar a que 
 termine el primero para devolver la llamada por lo que bloqueará el bucle de 
-eventos pero nos sirve como ejemplo.
+eventos pero nos sirve como ejemplo de funcionalidad.
 
 ### Context Manager asíncronos
 Un Context Manager asíncrono es lo mismo que uno síncrono, pero con soporte
